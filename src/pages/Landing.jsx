@@ -1,6 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       {/* Centered panel */}
@@ -16,7 +23,9 @@ const Landing = () => {
           </div>
         </div>
         {/* Login Button */}
-        <button className="mt-8 px-4 py-1 border-2 border-[#222] bg-transparent text-[#e3eddd] text-base hover:bg-[#222] hover:text-[#e1ffa7] transition-colors duration-300">
+        <button
+          onClick={handleLoginClick}
+          className="mt-8 px-4 py-1 border-2 border-[#222] bg-transparent text-[#e3eddd] text-base hover:bg-[#222] hover:text-[#e1ffa7] transition-colors duration-300">
           Login
         </button>
       </div>
