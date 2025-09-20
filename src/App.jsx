@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { supabase } from './lib/supabaseClient';
+import PurchaseStock from './pages/PurchaseStock';
 
 // Simple in-file auth gate for protecting routes and preparing for role-based access
 const AuthGate = ({ children, allowedRoles = [] }) => {
@@ -59,6 +60,7 @@ function App() {
         <Route path="/dashboard" element={<AuthGate><Dashboard /></AuthGate>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/purchase-stock" element={<AuthGate allowedRoles={['Purchaser']}><PurchaseStock /></AuthGate>} />
       </Routes>
     </Router>
   );
