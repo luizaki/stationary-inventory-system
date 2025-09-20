@@ -28,25 +28,31 @@ const ROLE_ICONS = {
 
 const ROLE_PAGES = {
   'Warehouse': [
+    { label: 'Dashboard', to: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
     { label: 'Stocks', to: '/stocks', icon: <FiPackage className="w-5 h-5" /> },
     { label: 'Dispatch Orders', to: '/dispatch-orders', icon: <FiTruck className="w-5 h-5" /> },
   ],
   'Purchaser': [
+    { label: 'Dashboard', to: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
     { label: 'Purchase Stock', to: '/purchase-stock', icon: <FiShoppingCart className="w-5 h-5" /> },
     { label: 'Reports', to: '/reports', icon: <FiFileText className="w-5 h-5" /> },
   ],
   'Customer': [
+    { label: 'Dashboard', to: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
     { label: 'Request Stock', to: '/request-stock', icon: <FiPackage className="w-5 h-5" /> },
     { label: 'Reports', to: '/reports', icon: <FiFileText className="w-5 h-5" /> },
   ],
   'CSR': [
+    { label: 'Dashboard', to: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
     { label: 'Track Requests', to: '/track-requests', icon: <FiClipboard className="w-5 h-5" /> },
   ],
   'TL': [
+    { label: 'Dashboard', to: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
     { label: 'Pending Approvals', to: '/pending-approvals', icon: <FiCheckSquare className="w-5 h-5" /> },
     { label: 'Approved Requests', to: '/approved-requests', icon: <FiCheckSquare className="w-5 h-5" /> },
   ],
   'Accounting': [
+    { label: 'Dashboard', to: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
     { label: 'Charge Requests', to: '/charge-requests', icon: <FiDollarSign className="w-5 h-5" /> },
     { label: 'Paid Orders', to: '/paid-orders', icon: <FiDollarSign className="w-5 h-5" /> },
   ],
