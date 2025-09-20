@@ -148,10 +148,10 @@ const Sidebar = ({ role }) => {
   ) : (
         <div className="flex items-center justify-between p-2">
             <div className="flex items-center min-w-0">
-                <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-sm">SIS</span>
+                <div className="w-8 h-8 bg-emerald-600 rounded-md flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-bold text-sm">FSIS</span>
                 </div>
-                <span className="ml-3 font-semibold text-gray-800 truncate">FARD SIS</span>
+                <span className="ml-3 font-semibold text-gray-800 truncate">FARD Stationery</span>
             </div>
             <button
                 onClick={() => setIsCollapsed(true)}
