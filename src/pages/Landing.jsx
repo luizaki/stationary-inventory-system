@@ -11,7 +11,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       {/* Centered panel */}
-      <div>
+      <div className="flex flex-col items-center justify-center">
         {/* Overlapping squares */}
         <div className="relative flex flex-col items-center">
           <div className="absolute -top-2 -left-2 w-[340px] h-[110px] border-2 border-[#222] z-10"></div>
