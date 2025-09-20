@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import Sidebar from '../components/Sidebar';
 
 const Dashboard = () => {
   const [role, setRole] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     let mounted = true;
@@ -24,11 +22,6 @@ const Dashboard = () => {
     };
   }, []);
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/login', { replace: true });
-  };
-
   return (
     <div className="min-h-screen bg-[#e1ffa7] flex">
       <div className="flex-shrink-0">
@@ -43,12 +36,6 @@ const Dashboard = () => {
               <h1 className="text-2xl font-bold text-[#222]">FARD Stationery</h1>
               {role && <p className="text-sm text-[#222] opacity-70">Role: {role}</p>}
             </div>
-            <button
-              onClick={handleSignOut}
-              className="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Sign out
-            </button>
           </div>
         </div>
 
