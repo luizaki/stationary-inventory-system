@@ -27,7 +27,7 @@ const Dashboard = () => {
       <div className="flex-shrink-0">
         <Sidebar role={role} />
       </div>
-      
+
       <main className="flex-1 overflow-auto p-6">
         {/* Dashboard Header */}
         <div className="mb-6">
@@ -76,7 +76,7 @@ const Dashboard = () => {
             <h2 className="text-lg font-semibold mb-3 text-[#222]">Top Categories</h2>
             <div className="space-y-2">
               {['Notebook', 'Pens', 'Coloring Items'].map((item, index) => (
-                <div 
+                <div
                   key={index}
                   className="w-full text-left bg-gray-500 p-2 rounded flex items-center"
                 >
@@ -92,7 +92,7 @@ const Dashboard = () => {
             <h2 className="text-lg font-semibold mb-3 text-[#222]">Top Customers</h2>
             <div className="space-y-2">
               {['Notebook', 'Pens', 'Coloring Items'].map((item, index) => (
-                <div 
+                <div
                   key={index}
                   className="w-full text-left bg-gray-500 p-2 rounded flex items-center"
                 >

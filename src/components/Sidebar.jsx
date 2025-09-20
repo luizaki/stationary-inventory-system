@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  FiMenu, 
-  FiX, 
+import {
+  FiMenu,
+  FiX,
   FiHome,
   FiPackage,
   FiTruck,
@@ -79,17 +79,17 @@ const Sidebar = ({ role }) => {
 
   useEffect(() => {
     let isMounted = true;
-    
+
     const getUserData = async () => {
       try {
         const { data: { user: authUser } } = await supabase.auth.getUser();
         if (isMounted && authUser) {
           setUser({
-            name: authUser.user_metadata?.full_name || 
-                  authUser.user_metadata?.name || 
+            name: authUser.user_metadata?.full_name ||
+                  authUser.user_metadata?.name ||
                   'User',
-            initial: (authUser.user_metadata?.full_name?.[0] || 
-                     authUser.user_metadata?.name?.[0] || 
+            initial: (authUser.user_metadata?.full_name?.[0] ||
+                     authUser.user_metadata?.name?.[0] ||
                      'U').toUpperCase()
           });
         }
@@ -107,11 +107,11 @@ const Sidebar = ({ role }) => {
       if (isMounted) {
         if (session?.user) {
           setUser({
-            name: session.user.user_metadata?.full_name || 
-                  session.user.user_metadata?.name || 
+            name: session.user.user_metadata?.full_name ||
+                  session.user.user_metadata?.name ||
                   'User',
-            initial: (session.user.user_metadata?.full_name?.[0] || 
-                     session.user.user_metadata?.name?.[0] || 
+            initial: (session.user.user_metadata?.full_name?.[0] ||
+                     session.user.user_metadata?.name?.[0] ||
                      'U').toUpperCase()
           });
         } else {
@@ -128,7 +128,7 @@ const Sidebar = ({ role }) => {
   }, []);
 
   return (
-    <div 
+    <div
       className={`relative h-screen flex-shrink-0 bg-white border-r border-gray-200 transition-all duration-300 ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}
@@ -175,7 +175,7 @@ const Sidebar = ({ role }) => {
               // Render actual navigation items
               items.map((item) => {
                 const isActive = location.pathname === item.to;
-                
+
                 return (
                   <NavLink
                     key={item.to}
@@ -211,10 +211,10 @@ const Sidebar = ({ role }) => {
               isCollapsed ? 'justify-center w-full' : 'px-3 w-full'
             }`}
           >
-            <svg 
-              className={`${isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3'}`} 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className={`${isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3'}`}
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

@@ -8,7 +8,7 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState(''); 
+  const [role, setRole] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -39,13 +39,13 @@ const Register = () => {
         options: {
           data: {
             full_name: name,
-            role: role, 
+            role: role,
           },
         },
       });
 
       if (signUpError) throw signUpError;
-      
+
       // Redirect to login page after successful registration
       const qs = new URLSearchParams();
       qs.set('registered', '1');

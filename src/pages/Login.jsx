@@ -44,7 +44,7 @@ const Login = () => {
       });
 
       if (error) throw error;
-      
+
       // Redirect to dashboard after successful login
       navigate(next, { replace: true });
     } catch (error) {
