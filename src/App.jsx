@@ -67,6 +67,7 @@ function App() {
         <Route path="/purchase-report" element={<AuthGate allowedRoles={['Purchaser']}><PurchaseReport /></AuthGate>} />
         <Route path="/charge-requests" element={<AuthGate allowedRoles={['Accounting']}><AccountingCharge /></AuthGate>} />
         <Route path="/paid-orders" element={<AuthGate allowedRoles={['Accounting']}><AccountingReport /></AuthGate>} />
+        <Route path="/invoice/purchase/:id" element={<AuthGate allowedRoles={['Accounting', 'Admin']}> <AccountingReport /> </AuthGate>} />
       </Routes>
     </Router>
   );

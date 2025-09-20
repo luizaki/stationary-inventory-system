@@ -66,7 +66,7 @@ export default function AccountingReport() {
     () => subtotal + tax + Number(deliveryFee || 0) - Number(discount || 0),
     [subtotal, tax, deliveryFee, discount]
   );
-
+  if (!id) return <div className="p-6 text-red-600">Invalid receipt URL (missing purchase id).</div>;
   if (loading) return <div className="p-6">Loading receipt…</div>;
   if (err) return <div className="p-6 text-red-600">{err}</div>;
   if (!purchase) return <div className="p-6">Purchase not found.</div>;

@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabaseClient";
 import Sidebar from "../components/Sidebar";
 import { format } from "date-fns";
 
-const php = new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" });
+const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 
 export default function AccountingCharge() {
   const navigate = useNavigate();
@@ -200,7 +200,7 @@ export default function AccountingCharge() {
   //   }
   // };
 
-  const gotoInvoice = (purchaseId) => navigate(`/invoice/order/${purchaseId}`);
+  const gotoInvoice = (purchaseId) => navigate(`/invoice/purchase/${purchaseId}`);
 
   // UI
   return (
@@ -335,7 +335,7 @@ export default function AccountingCharge() {
                               {(p.purchase_item || []).length}
                             </td>
                             <td className="px-6 py-4 text-sm text-right font-medium">
-                              {php.format(sub)}
+                              {usd.format(sub)}
                             </td>
                             <td className="px-6 py-4 text-right space-x-3">
                               <button
@@ -469,7 +469,7 @@ export default function AccountingCharge() {
                             </span>
                           </td>
                           <td className="px-6 py-4 text-right text-sm font-medium">
-                            {php.format(purchaseSubtotal(p))}
+                            {usd.format(purchaseSubtotal(p))}
                           </td>
                           <td className="px-6 py-4 text-right space-x-3">
                             <button
@@ -548,10 +548,10 @@ export default function AccountingCharge() {
                               {it.quantity}
                             </td>
                             <td className="px-4 py-2 text-sm text-right">
-                              {php.format(cost)}
+                              {usd.format(cost)}
                             </td>
                             <td className="px-4 py-2 text-sm text-right font-medium">
-                              {php.format(cost * Number(it.quantity || 0))}
+                              {usd.format(cost * Number(it.quantity || 0))}
                             </td>
                           </tr>
                         );
@@ -603,23 +603,23 @@ export default function AccountingCharge() {
                   <div className="w-full max-w-sm space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
-                      <span>{php.format(previewTotals.subtotal)}</span>
+                      <span>{usd.format(previewTotals.subtotal)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Tax</span>
-                      <span>{php.format(previewTotals.tax)}</span>
+                      <span>{usd.format(previewTotals.tax)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Delivery Fee</span>
-                      <span>{php.format(deliveryFee)}</span>
+                      <span>{usd.format(deliveryFee)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Discount</span>
-                      <span>- {php.format(discount)}</span>
+                      <span>- {usd.format(discount)}</span>
                     </div>
                     <div className="border-t pt-2 flex justify-between font-semibold">
                       <span>Total</span>
-                      <span>{php.format(previewTotals.total)}</span>
+                      <span>{usd.format(previewTotals.total)}</span>
                     </div>
                   </div>
                 </div>
