@@ -35,7 +35,7 @@ const ROLE_PAGES = {
   'Purchaser': [
     { label: 'Dashboard', to: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
     { label: 'Purchase Stock', to: '/purchase-stock', icon: <FiShoppingCart className="w-5 h-5" /> },
-    { label: 'Reports', to: '/reports', icon: <FiFileText className="w-5 h-5" /> },
+    { label: 'Purchase Reports', to: '/purchase-report', icon: <FiFileText className="w-5 h-5" /> },
   ],
   'Customer': [
     { label: 'Dashboard', to: '/dashboard', icon: <FiHome className="w-5 h-5" /> },
