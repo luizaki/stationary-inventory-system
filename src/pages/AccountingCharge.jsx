@@ -24,12 +24,12 @@ export default function AccountingCharge() {
     startDate: "",
     endDate: "",
     search: "",
-    // If your PurchaseStock inserts as 'pending', set this to 'pending'
-    status: "completed", // ← change to 'pending' once you start using pending
+    // If your PurchaseStock inserts as 'pending', change to 'pending'
+    status: "completed",
   });
   const [loading, setLoading] = useState(true);
 
-  // PAID tab (purchases with status completed by default)
+  // PAID tab (history)
   const [paidPurchases, setPaidPurchases] = useState([]);
   const [chFilters, setChFilters] = useState({
     startDate: "",
@@ -44,7 +44,7 @@ export default function AccountingCharge() {
   const [deliveryFee, setDeliveryFee] = useState(0);
   const [discount, setDiscount] = useState(0);
 
-  // read role
+  // Load role
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -52,13 +52,13 @@ export default function AccountingCharge() {
     })();
   }, []);
 
-  // derive tab from URL
+  // Auto-select tab based on URL
   useEffect(() => {
     if (location.pathname.includes("/paid-orders")) setTab("paid");
     else setTab("charge");
   }, [location.pathname]);
 
-  // fetch purchases for CHARGE tab
+  // Fetch purchases for CHARGE tab
   useEffect(() => {
     if (tab !== "charge") return;
     (async () => {
@@ -77,9 +77,7 @@ export default function AccountingCharge() {
           `)
           .order("purchase_date", { ascending: false });
 
-        if (rqFilters.status && rqFilters.status !== "all") {
-          q = q.eq("status", rqFilters.status);
-        }
+        if (rqFilters.status && rqFilters.status !== "all") q = q.eq("status", rqFilters.status);
         if (rqFilters.startDate) q = q.gte("purchase_date", rqFilters.startDate);
         if (rqFilters.endDate) q = q.lte("purchase_date", rqFilters.endDate);
 
@@ -102,7 +100,7 @@ export default function AccountingCharge() {
     })();
   }, [tab, rqFilters]);
 
-  // fetch purchases for PAID tab
+  // Fetch purchases for PAID tab
   useEffect(() => {
     if (tab !== "paid") return;
     (async () => {
@@ -118,9 +116,7 @@ export default function AccountingCharge() {
           `)
           .order("purchase_date", { ascending: false });
 
-        if (chFilters.status && chFilters.status !== "all") {
-          q = q.eq("status", chFilters.status);
-        }
+        if (chFilters.status && chFilters.status !== "all") q = q.eq("status", chFilters.status);
         if (chFilters.startDate) q = q.gte("purchase_date", chFilters.startDate);
         if (chFilters.endDate) q = q.lte("purchase_date", chFilters.endDate);
 
@@ -143,8 +139,8 @@ export default function AccountingCharge() {
     })();
   }, [tab, chFilters]);
 
-  // role gate (only block when we know the role)
-  if (role && role.toLowerCase() !== "accounting") {
+  // Role gate (only block when known)
+  if (role && role.toLowerCase() !== "accounting" && role.toLowerCase() !== "admin") {
     return (
       <div className="min-h-screen bg-gray-50 flex">
         <Sidebar role={role} />
@@ -156,7 +152,7 @@ export default function AccountingCharge() {
     );
   }
 
-  // helpers
+  // Helpers
   const purchaseSubtotal = (p) =>
     (p.purchase_item || []).reduce(
       (sum, it) => sum + Number(it.unit_cost ?? 0) * Number(it.quantity ?? 0),
@@ -171,7 +167,7 @@ export default function AccountingCharge() {
     return { subtotal, tax, total };
   }, [selectedPurchase, taxRate, deliveryFee, discount]);
 
-  // actions
+  // Actions
   const openCharge = (p) => {
     setSelectedPurchase(p);
     setTaxRate(0.12);
@@ -181,24 +177,6 @@ export default function AccountingCharge() {
     setOk("");
     setErr("");
   };
-
-  // eventually add a 'charged' value to purchase_status
-  // const markCharged = async () => {
-  //   if (!selectedPurchase) return;
-  //   try {
-  //     const { error } = await supabase
-  //       .from("purchase")
-  //       .update({ status: "completed" })
-  //       .eq("id", selectedPurchase.id);
-  //     if (error) throw error;
-  //     setChargeOpen(false);
-  //     setOk("Purchase marked as COMPLETED.");
-  //     setRqFilters({ ...rqFilters }); // refresh
-  //   } catch (e) {
-  //     console.error(e);
-  //     setErr(e.message || "Failed to update status.");
-  //   }
-  // };
 
   const gotoInvoice = (purchaseId) => navigate(`/invoice/purchase/${purchaseId}`);
 
@@ -214,8 +192,6 @@ export default function AccountingCharge() {
               <h1 className="text-2xl font-semibold text-gray-900">Accounting — Purchases</h1>
               <p className="text-sm text-gray-500">Review purchased stock and print receipts</p>
             </div>
-            <div className="inline-flex rounded-md shadow-sm" role="group">
-            </div>
           </div>
 
           {err && (
@@ -229,7 +205,7 @@ export default function AccountingCharge() {
             </div>
           )}
 
-          {/* CHARGE TAB: purchases list */}
+          {/* CHARGE TAB */}
           {tab === "charge" && (
             <section className="space-y-6">
               {/* Filters */}
@@ -240,9 +216,7 @@ export default function AccountingCharge() {
                     <input
                       type="date"
                       value={rqFilters.startDate}
-                      onChange={(e) =>
-                        setRqFilters((f) => ({ ...f, startDate: e.target.value }))
-                      }
+                      onChange={(e) => setRqFilters((f) => ({ ...f, startDate: e.target.value }))}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -251,9 +225,7 @@ export default function AccountingCharge() {
                     <input
                       type="date"
                       value={rqFilters.endDate}
-                      onChange={(e) =>
-                        setRqFilters((f) => ({ ...f, endDate: e.target.value }))
-                      }
+                      onChange={(e) => setRqFilters((f) => ({ ...f, endDate: e.target.value }))}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -261,9 +233,7 @@ export default function AccountingCharge() {
                     <label className="block text-sm font-medium mb-1">Status</label>
                     <select
                       value={rqFilters.status}
-                      onChange={(e) =>
-                        setRqFilters((f) => ({ ...f, status: e.target.value }))
-                      }
+                      onChange={(e) => setRqFilters((f) => ({ ...f, status: e.target.value }))}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       <option value="completed">Completed</option>
@@ -278,9 +248,7 @@ export default function AccountingCharge() {
                     <input
                       type="text"
                       value={rqFilters.search}
-                      onChange={(e) =>
-                        setRqFilters((f) => ({ ...f, search: e.target.value }))
-                      }
+                      onChange={(e) => setRqFilters((f) => ({ ...f, search: e.target.value }))}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -299,21 +267,11 @@ export default function AccountingCharge() {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                          Purchase ID
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                          Distributor
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                          Purchase Date
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">
-                          Lines
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">
-                          Subtotal
-                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Purchase ID</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Distributor</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Purchase Date</th>
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Lines</th>
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Subtotal</th>
                         <th className="px-6 py-3"></th>
                       </tr>
                     </thead>
@@ -323,20 +281,14 @@ export default function AccountingCharge() {
                         return (
                           <tr key={p.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 text-sm text-gray-900">{p.id}</td>
+                            <td className="px-6 py-4 text-sm text-gray-600">{p.distributor?.name || "—"}</td>
                             <td className="px-6 py-4 text-sm text-gray-600">
-                              {p.distributor?.name || "—"}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-600">
-                              {p.purchase_date
-                                ? format(new Date(p.purchase_date), "MMM dd, yyyy")
-                                : "—"}
+                              {p.purchase_date ? format(new Date(p.purchase_date), "MMM dd, yyyy") : "—"}
                             </td>
                             <td className="px-6 py-4 text-sm text-right text-gray-600">
                               {(p.purchase_item || []).length}
                             </td>
-                            <td className="px-6 py-4 text-sm text-right font-medium">
-                              {usd.format(sub)}
-                            </td>
+                            <td className="px-6 py-4 text-sm text-right font-medium">{usd.format(sub)}</td>
                             <td className="px-6 py-4 text-right space-x-3">
                               <button
                                 onClick={() => openCharge(p)}
@@ -361,7 +313,7 @@ export default function AccountingCharge() {
             </section>
           )}
 
-          {/* PAID TAB: history */}
+          {/* PAID TAB */}
           {tab === "paid" && (
             <section className="space-y-6">
               <div className="bg-white p-4 rounded-lg shadow">
@@ -371,9 +323,7 @@ export default function AccountingCharge() {
                     <input
                       type="date"
                       value={chFilters.startDate}
-                      onChange={(e) =>
-                        setChFilters((f) => ({ ...f, startDate: e.target.value }))
-                      }
+                      onChange={(e) => setChFilters((f) => ({ ...f, startDate: e.target.value }))}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -382,9 +332,7 @@ export default function AccountingCharge() {
                     <input
                       type="date"
                       value={chFilters.endDate}
-                      onChange={(e) =>
-                        setChFilters((f) => ({ ...f, endDate: e.target.value }))
-                      }
+                      onChange={(e) => setChFilters((f) => ({ ...f, endDate: e.target.value }))}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -392,9 +340,7 @@ export default function AccountingCharge() {
                     <label className="block text-sm font-medium mb-1">Status</label>
                     <select
                       value={chFilters.status}
-                      onChange={(e) =>
-                        setChFilters((f) => ({ ...f, status: e.target.value }))
-                      }
+                      onChange={(e) => setChFilters((f) => ({ ...f, status: e.target.value }))}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                       <option value="completed">Completed</option>
@@ -403,15 +349,11 @@ export default function AccountingCharge() {
                     </select>
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium mb-1">
-                      Search (Purchase / Distributor)
-                    </label>
+                    <label className="block text-sm font-medium mb-1">Search (Purchase / Distributor)</label>
                     <input
                       type="text"
                       value={chFilters.search}
-                      onChange={(e) =>
-                        setChFilters((f) => ({ ...f, search: e.target.value }))
-                      }
+                      onChange={(e) => setChFilters((f) => ({ ...f, search: e.target.value }))}
                       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -427,21 +369,11 @@ export default function AccountingCharge() {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                          Purchase
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                          Distributor
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                          Purchase Date
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                          Status
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">
-                          Subtotal
-                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Purchase</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Distributor</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Purchase Date</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Subtotal</th>
                         <th className="px-6 py-3"></th>
                       </tr>
                     </thead>
@@ -449,22 +381,14 @@ export default function AccountingCharge() {
                       {paidPurchases.map((p) => (
                         <tr key={p.id} className="hover:bg-gray-50">
                           <td className="px-6 py-4 text-sm">{p.id}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600">{p.distributor?.name || "—"}</td>
                           <td className="px-6 py-4 text-sm text-gray-600">
-                            {p.distributor?.name || "—"}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-600">
-                            {p.purchase_date
-                              ? format(new Date(p.purchase_date), "MMM dd, yyyy")
-                              : "—"}
+                            {p.purchase_date ? format(new Date(p.purchase_date), "MMM dd, yyyy") : "—"}
                           </td>
                           <td className="px-6 py-4 text-sm">
-                            <span
-                              className={`inline-flex px-2 py-1 rounded text-xs font-medium ${
-                                p.status === "completed"
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-yellow-100 text-yellow-800"
-                              }`}
-                            >
+                            <span className={`inline-flex px-2 py-1 rounded text-xs font-medium ${
+                              p.status === "completed" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                            }`}>
                               {p.status}
                             </span>
                           </td>
@@ -472,10 +396,7 @@ export default function AccountingCharge() {
                             {usd.format(purchaseSubtotal(p))}
                           </td>
                           <td className="px-6 py-4 text-right space-x-3">
-                            <button
-                              onClick={() => gotoInvoice(p.id)}
-                              className="text-blue-600 hover:text-blue-800"
-                            >
+                            <button onClick={() => gotoInvoice(p.id)} className="text-blue-600 hover:text-blue-800">
                               View Receipt
                             </button>
                           </td>
@@ -495,45 +416,23 @@ export default function AccountingCharge() {
             <div className="bg-white w-full max-w-3xl rounded-lg shadow-lg">
               <div className="flex items-center justify-between border-b px-5 py-3">
                 <h3 className="text-lg font-semibold">Review — {selectedPurchase.id}</h3>
-                <button
-                  onClick={() => setChargeOpen(false)}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  ✕
-                </button>
+                <button onClick={() => setChargeOpen(false)} className="text-gray-500 hover:text-gray-700">✕</button>
               </div>
               <div className="p-5 space-y-4 max-h-[70vh] overflow-auto">
                 <div className="text-sm text-gray-600">
-                  <div>
-                    <b>Distributor:</b> {selectedPurchase.distributor?.name || "—"}
-                  </div>
-                  <div>
-                    <b>Purchase Date:</b>{" "}
-                    {selectedPurchase.purchase_date
-                      ? format(new Date(selectedPurchase.purchase_date), "MMM dd, yyyy")
-                      : "—"}
-                  </div>
-                  <div>
-                    <b>Status:</b> {selectedPurchase.status || "—"}
-                  </div>
+                  <div><b>Distributor:</b> {selectedPurchase.distributor?.name || "—"}</div>
+                  <div><b>Purchase Date:</b> {selectedPurchase.purchase_date ? format(new Date(selectedPurchase.purchase_date), "MMM dd, yyyy") : "—"}</div>
+                  <div><b>Status:</b> {selectedPurchase.status || "—"}</div>
                 </div>
 
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">
-                          Item
-                        </th>
-                        <th className="px-4 py-2 text-right text-xs font-semibold text-gray-600 uppercase">
-                          Qty
-                        </th>
-                        <th className="px-4 py-2 text-right text-xs font-semibold text-gray-600 uppercase">
-                          Unit Cost
-                        </th>
-                        <th className="px-4 py-2 text-right text-xs font-semibold text-gray-600 uppercase">
-                          Line Total
-                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase">Item</th>
+                        <th className="px-4 py-2 text-right text-xs font-semibold text-gray-600 uppercase">Qty</th>
+                        <th className="px-4 py-2 text-right text-xs font-semibold text-gray-600 uppercase">Unit Cost</th>
+                        <th className="px-4 py-2 text-right text-xs font-semibold text-gray-600 uppercase">Line Total</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-100">
@@ -541,18 +440,10 @@ export default function AccountingCharge() {
                         const cost = Number(it.unit_cost ?? it.item?.base_price ?? 0);
                         return (
                           <tr key={idx}>
-                            <td className="px-4 py-2 text-sm">
-                              {it.item?.name || it.item_id}
-                            </td>
-                            <td className="px-4 py-2 text-sm text-right">
-                              {it.quantity}
-                            </td>
-                            <td className="px-4 py-2 text-sm text-right">
-                              {usd.format(cost)}
-                            </td>
-                            <td className="px-4 py-2 text-sm text-right font-medium">
-                              {usd.format(cost * Number(it.quantity || 0))}
-                            </td>
+                            <td className="px-4 py-2 text-sm">{it.item?.name || it.item_id}</td>
+                            <td className="px-4 py-2 text-sm text-right">{it.quantity}</td>
+                            <td className="px-4 py-2 text-sm text-right">{usd.format(cost)}</td>
+                            <td className="px-4 py-2 text-sm text-right font-medium">{usd.format(cost * Number(it.quantity || 0))}</td>
                           </tr>
                         );
                       })}
@@ -563,84 +454,40 @@ export default function AccountingCharge() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">Tax Rate</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={taxRate}
+                    <input type="number" step="0.01" min="0" value={taxRate}
                       onChange={(e) => setTaxRate(Number(e.target.value))}
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Computed only (not stored)
-                    </p>
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
+                    <p className="text-xs text-gray-500 mt-1">Computed only (not stored)</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Delivery Fee</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={deliveryFee}
+                    <input type="number" step="0.01" min="0" value={deliveryFee}
                       onChange={(e) => setDeliveryFee(e.target.value)}
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Discount Amount</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={discount}
+                    <input type="number" step="0.01" min="0" value={discount}
                       onChange={(e) => setDiscount(e.target.value)}
-                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
+                      className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" />
                   </div>
                 </div>
 
                 <div className="flex justify-end">
                   <div className="w-full max-w-sm space-y-1 text-sm">
-                    <div className="flex justify-between">
-                      <span>Subtotal</span>
-                      <span>{usd.format(previewTotals.subtotal)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Tax</span>
-                      <span>{usd.format(previewTotals.tax)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Delivery Fee</span>
-                      <span>{usd.format(deliveryFee)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Discount</span>
-                      <span>- {usd.format(discount)}</span>
-                    </div>
-                    <div className="border-t pt-2 flex justify-between font-semibold">
-                      <span>Total</span>
-                      <span>{usd.format(previewTotals.total)}</span>
-                    </div>
+                    <div className="flex justify-between"><span>Subtotal</span><span>{usd.format(previewTotals.subtotal)}</span></div>
+                    <div className="flex justify-between"><span>Tax</span><span>{usd.format(previewTotals.tax)}</span></div>
+                    <div className="flex justify-between"><span>Delivery Fee</span><span>{usd.format(deliveryFee)}</span></div>
+                    <div className="flex justify-between"><span>Discount</span><span>- {usd.format(discount)}</span></div>
+                    <div className="border-t pt-2 flex justify-between font-semibold"><span>Total</span><span>{usd.format(previewTotals.total)}</span></div>
                   </div>
                 </div>
               </div>
               <div className="px-5 py-3 border-t bg-gray-50 flex justify-end gap-2">
-                <button
-                  onClick={() => setChargeOpen(false)}
-                  className="px-4 py-2 rounded-md border bg-white hover:bg-gray-50"
-                >
-                  Close
-                </button>
-                <button
-                  onClick={() => gotoInvoice(selectedPurchase.id)}
-                  className="px-4 py-2 rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50"
-                >
+                <button onClick={() => setChargeOpen(false)} className="px-4 py-2 rounded-md border bg-white hover:bg-gray-50">Close</button>
+                <button onClick={() => gotoInvoice(selectedPurchase.id)} className="px-4 py-2 rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50">
                   Print Receipt
                 </button>
-                {/* Enable if you add a 'charged' or want to set 'completed' */}
-                {/* <button onClick={markCharged} className="px-4 py-2 rounded-md text-white bg-green-600 hover:bg-green-700">
-                  Mark as Completed
-                </button> */}
               </div>
             </div>
           </div>
